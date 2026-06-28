@@ -23,7 +23,10 @@
 <body class="bg-surface text-on-surface custom-scrollbar text-sm">
 
     <div id="api-warning-banner" class="hidden bg-error-container text-on-error-container px-4 py-2 text-center text-xs font-semibold border-b border-error/20 flex justify-between items-center z-50 relative">
-        <span>⚠️ 提示：未检测到模型密钥配置，AI 核心流水线将无法启动。请点击右上角「⚙️ 资产配置」进行绑定。</span>
+        <div class="flex items-center gap-2 mx-auto">
+            <span class="material-symbols-outlined text-sm">warning</span>
+            <span>提示：未检测到模型密钥配置，AI 核心流水线将无法启动。请点击左下角「资产与模型配置」进行绑定。</span>
+        </div>
     </div>
 
     <div class="flex h-screen overflow-hidden bg-surface-container-lowest">
@@ -40,26 +43,26 @@
             <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
                 <button data-nav="tracker" onclick="switchTab('tracker')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
                     <span class="material-symbols-outlined">analytics</span>
-                    <span>📊 投递追踪看板</span>
+                    <span>投递追踪看板</span>
                 </button>
                 <button data-nav="workspace" onclick="switchTab('workspace')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
                     <span class="material-symbols-outlined">model_training</span>
-                    <span>🚀 核心AI工作台</span>
+                    <span>核心 AI 工作台</span>
                 </button>
                 <button data-nav="calendar" onclick="switchTab('calendar')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
                     <span class="material-symbols-outlined">calendar_month</span>
-                    <span>📅 秋招日程总览</span>
+                    <span>秋招日程总览</span>
                 </button>
                 <button data-nav="debrief" onclick="switchTab('debrief')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
                     <span class="material-symbols-outlined">mic</span>
-                    <span>🎙️ 现场录音复盘</span>
+                    <span>现场录音复盘</span>
                 </button>
             </nav>
 
             <div class="p-4 border-t border-outline-variant">
-                <button id="btn-open-settings" onclick="openGlobalSettingsModal()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-surface border border-outline-variant rounded-xl hover:bg-surface-container-high font-medium text-xs transition cursor-pointer">
-                    <span class="material-symbols-outlined !text-sm">settings</span>
-                    <span>⚙️ 资产与模型配置</span>
+                <button id="btn-open-settings" onclick="openGlobalSettingsModal()" class="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 bg-surface border border-outline-variant rounded-xl hover:bg-surface-container-high font-semibold text-xs transition cursor-pointer text-on-surface-variant hover:text-primary">
+                    <span class="material-symbols-outlined !text-base">tune</span>
+                    <span>资产与模型配置</span>
                 </button>
             </div>
         </aside>
@@ -82,7 +85,10 @@
                 <section id="content-tracker" class="tab-content space-y-6">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs">
-                            <h3 class="text-base font-bold text-on-surface mb-4">🆕 录入全新投递意向岗位</h3>
+                            <div class="flex items-center gap-2 mb-4 text-on-surface">
+                                <span class="material-symbols-outlined text-primary">post_add</span>
+                                <h3 class="text-base font-bold">录入全新投递意向岗位</h3>
+                            </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">公司名称 *</label><input id="track-company" type="text" placeholder="例如：TikTok Shop" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
                                 <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">目标岗位 *</label><input id="track-role" type="text" placeholder="例如：产品经理 / 策略运营" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
@@ -101,14 +107,23 @@
                                 <div class="md:col-span-2"><label class="block text-xs font-medium mb-1 text-on-surface-variant">岗位职责具体 JD 文本 (选填，供大模型进行五维对齐分析)</label><textarea id="track-jd" rows="3" placeholder="粘贴官方招聘JD描述..." class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary font-mono"></textarea></div>
                             </div>
                             <div class="mt-4 flex justify-end">
-                                <button id="btn-add-track" class="px-5 py-2 bg-primary text-on-primary rounded-xl font-bold text-xs hover:shadow-md transition cursor-pointer">➕ 压入本地追踪矩阵</button>
+                                <button id="btn-add-track" class="px-5 py-2 bg-primary text-on-primary rounded-xl font-bold text-xs hover:shadow-md transition cursor-pointer flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined !text-sm">add</span>
+                                    <span>压入本地追踪矩阵</span>
+                                </button>
                             </div>
                         </div>
 
                         <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs flex flex-col">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-base font-bold text-on-surface">🏁 近期临近大厂日程</h3>
-                                <button onclick="switchTab('calendar')" class="text-xs text-primary font-semibold hover:underline">去排期板 ➔</button>
+                                <div class="flex items-center gap-2 text-on-surface">
+                                    <span class="material-symbols-outlined text-amber-500">notifications_active</span>
+                                    <h3 class="text-base font-bold">近期临近大厂日程</h3>
+                                </div>
+                                <button onclick="switchTab('calendar')" class="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5">
+                                    <span>去排期板</span>
+                                    <span class="material-symbols-outlined !text-xs">arrow_forward</span>
+                                </button>
                             </div>
                             <div id="upcoming-events-list" class="flex-1 space-y-2 overflow-y-auto max-h-[360px] custom-scrollbar">
                                 </div>
@@ -118,17 +133,23 @@
                     <div class="bg-surface rounded-2xl border border-outline-variant shadow-xs overflow-hidden">
                         <div class="p-6 border-b border-outline-variant flex flex-wrap items-center justify-between gap-4 bg-surface-container-low">
                             <div class="flex items-center gap-3">
-                                <h3 class="text-base font-bold text-on-surface">📊 全景投递岗位跟踪仓</h3>
+                                <div class="flex items-center gap-2 text-on-surface">
+                                    <span class="material-symbols-outlined text-primary">database</span>
+                                    <h3 class="text-base font-bold">全景投递岗位跟踪仓</h3>
+                                </div>
                                 <div id="tracker-stats" class="text-xs text-on-surface-variant font-mono"></div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <input id="search-track-keyword" type="text" placeholder="🔍 快速过滤公司/岗位..." class="p-1.5 border border-outline rounded-lg text-xs w-48 bg-surface">
+                                <div class="relative flex items-center">
+                                    <span class="material-symbols-outlined absolute left-2.5 text-on-surface-variant !text-sm pointer-events-none">search</span>
+                                    <input id="search-track-keyword" type="text" placeholder="快速过滤公司/岗位..." class="pl-8 pr-2.5 py-1.5 border border-outline rounded-lg text-xs w-48 bg-surface">
+                                </div>
                                 <select id="filter-track-status" class="p-1.5 border border-outline rounded-lg text-xs bg-surface">
                                     <option value="全部" selected>全部状态</option>
                                     <option value="已投递">已投递</option>
                                     <option value="笔试中">笔试/测评</option>
-                                    <option value="面试中">面试推进中 ⚡</option>
-                                    <option value="已拿Offer">🎉 斩获Offer</option>
+                                    <option value="面试中">面试推进中</option>
+                                    <option value="已拿Offer">斩获Offer</option>
                                     <option value="流程终止">流程终止</option>
                                 </select>
                             </div>
@@ -159,8 +180,14 @@
                         
                         <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs space-y-4">
                             <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                                <h3 class="text-base font-bold text-on-surface">⚙️ AI 备战引擎调度中心</h3>
-                                <button onclick="clearActiveSessionResults()" class="text-xs text-error font-medium hover:underline">♻️ 清空会话</button>
+                                <div class="flex items-center gap-2 text-on-surface">
+                                    <span class="material-symbols-outlined text-primary font-medium">instant_mix</span>
+                                    <h3 class="text-base font-bold">AI 备战引擎调度中心</h3>
+                                </div>
+                                <button onclick="clearActiveSessionResults()" class="text-xs text-error font-medium hover:underline flex items-center gap-0.5">
+                                    <span class="material-symbols-outlined !text-xs">restart_alt</span>
+                                    <span>清空会话</span>
+                                </button>
                             </div>
                             <div class="space-y-3">
                                 <div><label class="block text-xs font-medium mb-1">目标公司</label><input id="in-company" type="text" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs"></div>
@@ -184,23 +211,27 @@
                             </div>
                             
                             <div class="border-t border-outline-variant pt-3">
-                                <label class="block text-xs font-bold mb-2 text-primary">🎯 勾选本次对齐的简历底座资产：</label>
+                                <div class="flex items-center gap-1.5 mb-2 text-primary">
+                                    <span class="material-symbols-outlined !text-base">inventory_2</span>
+                                    <label class="block text-xs font-bold">勾选本次对齐的简历底座资产：</label>
+                                </div>
                                 <div id="resume-selectors" class="space-y-2">
                                     </div>
                             </div>
 
-                            <button id="btn-run-pipeline" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold text-xs hover:shadow-lg transition cursor-pointer mt-2 flex items-center justify-center gap-1">
-                                <span>⚡ 自动开启五维全套深度备战管道</span>
+                            <button id="btn-run-pipeline" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold text-xs hover:shadow-lg transition cursor-pointer mt-2 flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined !text-sm">bolt</span>
+                                <span>自动开启五维全套深度备战管道</span>
                             </button>
                         </div>
 
                         <div class="xl:col-span-2 bg-surface rounded-2xl border border-outline-variant shadow-xs overflow-hidden flex flex-col min-h-[580px]">
                             <div class="bg-surface-container border-b border-outline-variant p-2 flex flex-wrap gap-1">
-                                <button data-tab="match" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-primary text-primary">📊 简历对齐矩阵</button>
-                                <button data-tab="business" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high">🌐 商业盘与指标拆解</button>
-                                <button data-tab="intro" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high">⚡ 黄金自我介绍</button>
-                                <button data-tab="star" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high">🌟 STAR故事深度挖掘</button>
-                                <button data-tab="qa" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high">☠️ 突发压测与反问</button>
+                                <button data-tab="match" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-primary text-primary flex items-center gap-1"><span class="material-symbols-outlined !text-sm">center_focus_strong</span>简历对齐矩阵</button>
+                                <button data-tab="business" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">query_stats</span>商业盘与指标拆解</button>
+                                <button data-tab="intro" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">record_voice_over</span>黄金自我介绍</button>
+                                <button data-tab="star" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">auto_stories</span>STAR故事深度挖掘</button>
+                                <button data-tab="qa" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">gavel</span>突发压测与反问</button>
                             </div>
                             
                             <div class="flex-1 p-6 bg-surface-container-lowest overflow-y-auto max-h-[560px] custom-scrollbar">
@@ -210,23 +241,23 @@
                                 </div>
 
                                 <div id="tab-panel-match" class="tab-content-panel space-y-4">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #1 / MATCHING MATRIX</span><button onclick="copyTabContent('tab-panel-match-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5">📋 复制文本</button></div>
+                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #1 / MATCHING MATRIX</span><button onclick="copyTabContent('tab-panel-match-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
                                     <article id="tab-panel-match-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
                                 </div>
                                 <div id="tab-panel-business" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #2 / BUSINESS INTEL</span><button onclick="copyTabContent('tab-panel-business-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5">📋 复制文本</button></div>
+                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #2 / BUSINESS INTEL</span><button onclick="copyTabContent('tab-panel-business-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
                                     <article id="tab-panel-business-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
                                 </div>
                                 <div id="tab-panel-intro" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #3 / PERFECT ELEVATOR PITCH</span><button onclick="copyTabContent('tab-panel-intro-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5">📋 复制文本</button></div>
+                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #3 / PERFECT ELEVATOR PITCH</span><button onclick="copyTabContent('tab-panel-intro-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
                                     <article id="tab-panel-intro-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
                                 </div>
                                 <div id="tab-panel-star" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #4 / HARDCORE STAR BEHAVIORAL</span><button onclick="copyTabContent('tab-panel-star-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5">📋 复制文本</button></div>
+                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #4 / HARDCORE STAR BEHAVIORAL</span><button onclick="copyTabContent('tab-panel-star-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
                                     <article id="tab-panel-star-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
                                 </div>
                                 <div id="tab-panel-qa" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #5 / STRESS TEST & REVERSE QA</span><button onclick="copyTabContent('tab-panel-qa-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5">📋 复制文本</button></div>
+                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #5 / STRESS TEST & REVERSE QA</span><button onclick="copyTabContent('tab-panel-qa-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
                                     <article id="tab-panel-qa-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
                                 </div>
                             </div>
@@ -240,14 +271,17 @@
                             <div class="flex items-center gap-4">
                                 <h2 id="cal-month-label" class="text-lg font-bold text-on-surface font-sans">2026 年 -- 月</h2>
                                 <div class="flex items-center border border-outline rounded-lg overflow-hidden bg-surface">
-                                    <button id="btn-cal-prev" class="p-2 hover:bg-surface-container transition"><span class="material-symbols-outlined !text-sm">arrow_back_ios</span></button>
-                                    <button id="btn-cal-next" class="p-2 hover:bg-surface-container transition"><span class="material-symbols-outlined !text-sm">arrow_forward_ios</span></button>
+                                    <button id="btn-cal-prev" class="p-2 hover:bg-surface-container transition flex items-center"><span class="material-symbols-outlined !text-sm">arrow_back_ios</span></button>
+                                    <button id="btn-cal-next" class="p-2 hover:bg-surface-container transition flex items-center"><span class="material-symbols-outlined !text-sm">arrow_forward_ios</span></button>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <button id="btn-view-mode-month" class="px-3 py-1.5 rounded-lg text-xs font-medium transition bg-primary text-on-primary">月视图</button>
                                 <button id="btn-view-mode-week" class="px-3 py-1.5 rounded-lg text-xs font-medium transition bg-surface-container-high">周视图指示线</button>
-                                <button onclick="openEventModal(null)" class="px-4 py-1.5 bg-tertiary text-on-tertiary rounded-lg text-xs font-bold hover:shadow-md transition">➕ 追加独立行程日程</button>
+                                <button onclick="openEventModal(null)" class="px-4 py-1.5 bg-tertiary text-on-tertiary rounded-lg text-xs font-bold hover:shadow-md transition flex items-center gap-1">
+                                    <span class="material-symbols-outlined !text-sm">edit_calendar</span>
+                                    <span>追加独立行程日程</span>
+                                </button>
                             </div>
                         </div>
 
@@ -268,8 +302,14 @@
                     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
                         <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs space-y-4">
                             <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                                <h3 class="text-base font-bold text-on-surface">🎙️ 核心终审官复盘面</h3>
-                                <button onclick="clearDebriefResults()" class="text-xs text-error font-medium hover:underline">♻️ 清空复盘</button>
+                                <div class="flex items-center gap-2 text-on-surface">
+                                    <span class="material-symbols-outlined text-tertiary">clinical_notes</span>
+                                    <h3 class="text-base font-bold">核心终审官复盘面</h3>
+                                </div>
+                                <button onclick="clearDebriefResults()" class="text-xs text-error font-medium hover:underline flex items-center gap-0.5">
+                                    <span class="material-symbols-outlined !text-xs">delete_sweep</span>
+                                    <span>清空复盘</span>
+                                </button>
                             </div>
                             <div class="space-y-3">
                                 <div><label class="block text-xs font-medium mb-1">复盘面试公司</label><input id="debrief-company" type="text" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs"></div>
@@ -280,14 +320,18 @@
                                     <textarea id="debrief-transcript" rows="10" placeholder="请在此粘贴你下考场后自己回忆的回答、或者是直接把现场偷偷录音的飞书妙记/录音转文字全文本丢进来..." class="w-full p-2 bg-surface border border-outline rounded-lg text-xs font-mono text-on-surface focus:ring-1 focus:ring-tertiary"></textarea>
                                 </div>
                             </div>
-                            <button id="btn-run-debrief" class="w-full py-3 bg-tertiary text-on-tertiary rounded-xl font-bold text-xs hover:shadow-lg transition cursor-pointer flex items-center justify-center gap-1">
-                                <span>🎙️ 启动 AI 模拟终审官逻辑穿透复盘</span>
+                            <button id="btn-run-debrief" class="w-full py-3 bg-tertiary text-on-tertiary rounded-xl font-bold text-xs hover:shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined !text-sm">psychology</span>
+                                <span>启动 AI 模拟终审官逻辑穿透复盘</span>
                             </button>
                         </div>
 
                         <div class="xl:col-span-2 bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs flex flex-col min-h-[560px]">
                             <div class="flex justify-between items-center border-b border-outline-variant pb-3 mb-4">
-                                <h3 class="text-base font-bold text-on-surface">📑 AI 核心高管复盘诊断书</h3>
+                                <div class="flex items-center gap-2 text-on-surface">
+                                    <span class="material-symbols-outlined text-tertiary">analytics</span>
+                                    <h3 class="text-base font-bold">AI 核心高管复盘诊断书</h3>
+                                </div>
                                 <span class="text-xs font-mono text-on-surface-variant">REPORT TYPE: AUDIT REPORT</span>
                             </div>
                             <div class="flex-1 bg-surface-container-lowest p-4 rounded-xl overflow-y-auto max-h-[500px] custom-scrollbar">
@@ -307,7 +351,10 @@
     <div id="event-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-surface w-full max-w-md rounded-2xl border border-outline-variant p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                <h3 class="text-base font-bold text-on-surface">📅 配置具体日程排期事件</h3>
+                <div class="flex items-center gap-2 text-on-surface">
+                    <span class="material-symbols-outlined text-primary">calendar_add_on</span>
+                    <h3 class="text-base font-bold">配置具体日程排期事件</h3>
+                </div>
                 <button onclick="closeEventModal()" class="text-on-surface-variant hover:text-on-surface text-lg">✕</button>
             </div>
             <form id="event-modal-form" class="space-y-3 text-xs">
@@ -319,9 +366,9 @@
                     <div>
                         <label class="block font-medium mb-1">事件核心分类</label>
                         <select id="event-type" class="w-full p-2 bg-surface border border-outline rounded-lg">
-                            <option value="面试">🎙️ 官方核心面试</option>
-                            <option value="笔试">📝 官方线上笔试/测评</option>
-                            <option value="其他">📌 日常备忘备战/反问</option>
+                            <option value="面试">官方核心面试</option>
+                            <option value="笔试">官方线上笔试/测评</option>
+                            <option value="其他">日常备忘备战/反问</option>
                         </select>
                     </div>
                 </div>
@@ -331,10 +378,16 @@
                 </div>
                 <div><label class="block font-medium mb-1">面试官提问核心细节备忘 / 接入链接线</label><textarea id="event-notes" rows="3" placeholder="例如：Zoom 链接、面试官可能考核的指标专项..." class="w-full p-2 bg-surface border border-outline rounded-lg font-mono"></textarea></div>
                 <div class="pt-2 flex justify-between gap-2">
-                    <button type="button" id="btn-delete-event" onclick="deleteEventFromModal()" class="px-3 py-2 bg-error-container text-on-error-container rounded-lg font-bold hover:bg-error/20 transition hidden">🗑️ 取消日程</button>
+                    <button type="button" id="btn-delete-event" onclick="deleteEventFromModal()" class="px-3 py-2 bg-error-container text-on-error-container rounded-lg font-bold hover:bg-error/20 transition hidden flex items-center gap-1">
+                        <span class="material-symbols-outlined !text-xs">delete</span>
+                        <span>取消日程</span>
+                    </button>
                     <div class="flex-1 flex justify-end gap-2">
                         <button type="button" onclick="closeEventModal()" class="px-4 py-2 border border-outline rounded-lg font-medium hover:bg-surface-container">放弃</button>
-                        <button type="submit" class="px-5 py-2 bg-primary text-on-primary rounded-lg font-bold shadow-md hover:shadow-lg transition">🔒 压入日历核心链</button>
+                        <button type="submit" class="px-5 py-2 bg-primary text-on-primary rounded-lg font-bold shadow-md hover:shadow-lg transition flex items-center gap-1.5">
+                            <span class="material-symbols-outlined !text-sm">lock</span>
+                            <span>压入日历核心链</span>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -344,26 +397,36 @@
     <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-surface w-full max-w-md rounded-2xl border border-outline-variant p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                <h3 class="text-base font-bold text-on-surface">⚙️ 资产与本地大模型密钥端配置</h3>
+                <div class="flex items-center gap-2 text-on-surface">
+                    <span class="material-symbols-outlined text-primary">encrypted</span>
+                    <h3 class="text-base font-bold">资产与本地大模型密钥端配置</h3>
+                </div>
                 <button onclick="closeGlobalSettingsModal()" class="text-on-surface-variant hover:text-on-surface text-lg">✕</button>
             </div>
             <div class="space-y-4 text-xs">
-                <div class="p-3 bg-primary-container/20 border border-primary/20 rounded-xl text-on-primary-container leading-relaxed">
-                    💡 <strong>安全持久化说明</strong>：数据完全离线持久化存储于本地浏览器的 <code>localStorage</code> 中，绝不经过任何第三方中转，安全放心。
+                <div class="p-3 bg-primary-container/20 border border-primary/20 rounded-xl text-on-primary-container leading-relaxed flex items-start gap-2">
+                    <span class="material-symbols-outlined text-primary !text-base mt-0.5">info</span>
+                    <span><strong>安全持久化说明</strong>：数据完全离线持久化存储于本地浏览器的 <code>localStorage</code> 中，绝不经过任何第三方中转，安全放心。</span>
                 </div>
                 <div><label class="block font-bold mb-1 text-on-surface">大模型 API Key 密钥保护 *</label><input id="settings-apikey" type="password" placeholder="sk-..." class="w-full p-2.5 bg-surface border border-outline rounded-lg font-mono"></div>
                 <div><label class="block font-bold mb-1 text-on-surface">API Base 请求中转基准域名</label><input id="settings-apibase" type="text" placeholder="https://api.deepseek.com/v1" class="w-full p-2.5 bg-surface border border-outline rounded-lg font-mono"></div>
                 <div><label class="block font-bold mb-1 text-on-surface">指定运行的大模型底层系列 ID</label><input id="settings-model" type="text" placeholder="deepseek-chat" class="w-full p-2.5 bg-surface border border-outline rounded-lg font-mono"></div>
                 
                 <div class="border-t border-outline-variant pt-3 space-y-2">
-                    <label class="block font-bold text-primary">📑 本地多版本多模态简历资产库微调：</label>
+                    <div class="flex items-center gap-1.5 text-primary">
+                        <span class="material-symbols-outlined !text-base">description</span>
+                        <label class="block font-bold">本地多版本多模态简历资产库微调：</label>
+                    </div>
                     <div id="resume-bank-settings-container" class="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar">
                         </div>
                 </div>
 
                 <div class="pt-2 flex justify-end gap-2">
                     <button onclick="closeGlobalSettingsModal()" class="px-4 py-2 border border-outline rounded-lg font-medium hover:bg-surface-container">关闭</button>
-                    <button id="btn-save-settings" class="px-5 py-2 bg-primary text-on-primary rounded-lg font-bold shadow-md transition">💾 同步保存配置资产</button>
+                    <button id="btn-save-settings" class="px-5 py-2 bg-primary text-on-primary rounded-lg font-bold shadow-md transition flex items-center gap-1.5">
+                        <span class="material-symbols-outlined !text-sm">save</span>
+                        <span>同步保存配置资产</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -383,7 +446,7 @@
             if (targetSection) {
                 targetSection.classList.remove('hidden');
             } else {
-                console.error(`[视图错误] 未能在 HTML 中寻找到目标功能模块 ID: content-${tabId}`);
+                console.error(`[视图错误] 未能在 HTML 中寻寻找目标功能模块 ID: content-${tabId}`);
             }
             
             // 3. 更新侧边栏导航高亮视觉
