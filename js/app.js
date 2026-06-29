@@ -1,10 +1,10 @@
 // ===================== 访问码验证 =====================
-const ACCESS_CODE = 'dudu7interview'; // 🔐 将此码分享给他人，他们输入此码才能使用平台
+const ACCESS_CODE = 'DUDU7INTERVIEW'; // 🔐 将此码分享给他人，他们输入此码才能使用平台
 const AUTH_STORAGE_KEY = 'interview_prep_auth_verified';
 
 // ===================== 预置大模型 API 配置 =====================
 // 🔑 在这里配置你自己的 API Key，用户输入访问码后将自动使用此配置，无需手动设置
-const DEFAULT_API_KEY = 'sk-a1baa6457b364d33ba4320e26daa1d1c'; // ⚠️ 请替换为你自己的 DeepSeek API Key
+const DEFAULT_API_KEY = 'sk-b85f8d7fb1b0419eb8b330525f193f25'; // ⚠️ 请替换为你自己的 DeepSeek API Key
 const DEFAULT_API_BASE = 'https://api.deepseek.com/v1';
 const DEFAULT_MODEL = 'deepseek-chat';
 
