@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   const CORRECT_CODE = "DeepSeek六六六"; 
 
   // 验证暗号是否正确
-  if (!code || code.toLowerCase() !== CORRECT_CODE.toLowerCase()) {
+  if (!code || code.trim().toLowerCase() !== CORRECT_CODE.toLowerCase()) {
     return res.status(200).json({ 
       isCodeError: true, 
       error: '暗号错误或已过期，请去小红书获取最新暗号！' 
@@ -36,14 +36,23 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'deepseek-chat', 
         messages: messages,
-        temperature: 0.7
+        temperature: 0.7,
+        max_tokens: 2500 // 🚀 限制单次生成最大Token长度，防止面试长篇策略报告由于过长直接卡挂 Vercel 路由
       })
     });
+
+    // 如果 DeepSeek 官方服务报错，给出友好提示
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("DeepSeek API 报错响应:", errText);
+      return res.status(response.status).json({ error: `DeepSeek 引擎响应异常，请稍后再试。` });
+    }
 
     const data = await response.json();
     return res.status(200).json(data);
 
   } catch (error) {
-    return res.status(500).json({ error: 'DeepSeek 接口连接失败: ' + error.message });
+    console.error("Vercel 后端异常:", error);
+    return res.status(500).json({ error: 'DeepSeek 接口连接失败或请求超时: ' + error.message });
   }
 }
