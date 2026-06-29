@@ -1,6 +1,12 @@
 // ===================== 访问码验证 =====================
-const ACCESS_CODE = 'INTERVIEW2024'; // 🔐 将此码分享给他人，他们输入此码才能使用平台
+const ACCESS_CODE = 'dudu7interview'; // 🔐 将此码分享给他人，他们输入此码才能使用平台
 const AUTH_STORAGE_KEY = 'interview_prep_auth_verified';
+
+// ===================== 预置大模型 API 配置 =====================
+// 🔑 在这里配置你自己的 API Key，用户输入访问码后将自动使用此配置，无需手动设置
+const DEFAULT_API_KEY = 'sk-a1baa6457b364d33ba4320e26daa1d1c'; // ⚠️ 请替换为你自己的 DeepSeek API Key
+const DEFAULT_API_BASE = 'https://api.deepseek.com/v1';
+const DEFAULT_MODEL = 'deepseek-chat';
 
 function checkAuth() {
     return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
@@ -24,9 +30,20 @@ function verifyCode() {
     if (enteredCode === ACCESS_CODE) {
         // 验证成功
         localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+        // 自动写入预置的 API 配置，用户无需手动设置
+        localStorage.setItem('interview_prep_settings', JSON.stringify({
+            apiKey: DEFAULT_API_KEY,
+            apiBase: DEFAULT_API_BASE,
+            model: DEFAULT_MODEL
+        }));
         const modal = document.getElementById('auth-modal');
         if (modal) modal.classList.add('hidden');
-        initApp();
+        try {
+            initApp();
+        } catch (e) {
+            console.error('initApp 失败:', e);
+            alert('应用初始化出错: ' + e.message + '，请刷新页面重试');
+        }
     } else {
         // 验证失败
         if (errorMsg) errorMsg.classList.remove('hidden');
@@ -74,14 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (checkAuth()) {
-        initApp();
+        try {
+            initApp();
+        } catch (e) {
+            console.error('initApp 失败:', e);
+            alert('应用初始化出错: ' + e.message + '，请刷新页面重试');
+        }
     } else {
         showAuthModal();
     }
 });
 
 let state = {
-    settings: { apiKey: '', apiBase: 'https://api.deepseek.com/v1', model: 'deepseek-chat' },
+    settings: { apiKey: DEFAULT_API_KEY, apiBase: DEFAULT_API_BASE, model: DEFAULT_MODEL },
     resumes: [
         { id: 'resume_a', name: '简历版本 A (例如：策略/运营方向)', content: '' },
         { id: 'resume_b', name: '简历版本 B (例如：产品/产品运营方向)', content: '' },
@@ -96,6 +118,7 @@ let state = {
 };
 
 function initApp() {
+    console.log('[Auth] initApp 开始执行...');
     const savedSettings = localStorage.getItem('interview_prep_settings');
     if (savedSettings) state.settings = JSON.parse(savedSettings);
     const savedResumes = localStorage.getItem('interview_prep_resumes');
@@ -1039,6 +1062,7 @@ async function runDebriefPipeline() {
 
 // 事件绑定
 function setupEventListeners() {
+    console.log('[Auth] setupEventListeners 开始绑定事件...');
     document.getElementById('nav-workspace').addEventListener('click', () => switchView('workspace'));
     document.getElementById('nav-tracker').addEventListener('click', () => switchView('tracker'));
     document.getElementById('nav-calendar').addEventListener('click', () => switchView('calendar')); // 新增
@@ -1147,6 +1171,7 @@ document.getElementById('btn-add-track').addEventListener('click', () => {
             target.style.animation = '';
         });
     });
+    console.log('[Auth] setupEventListeners 事件绑定完成');
 }
 
 window.copyTabContent = (panelId) => {
