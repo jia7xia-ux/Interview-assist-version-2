@@ -699,6 +699,30 @@
         </div>
     </div>
 
+    <!-- 访问码验证弹窗 —— 首次访问需输入正确访问码才能使用平台 -->
+    <div id="auth-modal" class="hidden fixed inset-0 bg-stone-950/30 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
+        <div class="bg-white border border-stone-200/80 rounded-3xl w-full max-w-md p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="text-4xl mb-3">🔐</div>
+                <h2 class="text-lg font-extrabold text-stone-900 mb-2">请输入访问码</h2>
+                <p class="text-xs text-stone-500 leading-relaxed">本平台为邀约制使用，请输入从分享者处获取的访问码以解锁全量 AI 备战功能。</p>
+            </div>
+            <div class="space-y-4">
+                <input
+                    id="auth-code-input"
+                    type="password"
+                    placeholder="请输入访问码"
+                    autocomplete="off"
+                    class="w-full bg-stone-50/60 border border-stone-200/60 rounded-xl px-4 py-3 text-sm text-stone-800 font-mono focus:outline-none focus:bg-white focus:border-stone-400 transition text-center tracking-widest"
+                />
+                <p id="auth-error-msg" class="hidden text-[11px] text-rose-500 text-center font-medium">访问码错误，请重试</p>
+                <button id="btn-verify-code" class="w-full py-3 bg-stone-900 text-stone-50 rounded-full text-sm font-bold hover:bg-stone-800 transition cursor-pointer shadow-md shadow-stone-900/10 active:scale-[0.97]">
+                    验证并进入
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 极轻量柔和的全局 Loading 覆盖层 -->
     <div id="loading-overlay" class="hidden fixed inset-0 bg-stone-900/10 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div class="bg-white/90 border border-stone-200 rounded-3xl p-6 max-w-lg w-full shadow-2xl">
