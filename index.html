@@ -1,491 +1,178 @@
 <!DOCTYPE html>
-<html class="light" lang="zh-CN">
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InterviewAI | 智能求职备战套件</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek 智能助手</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; font-size: 20px; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 99px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+        /* 弹窗特有的毛玻璃与渐变样式，确保完全适配移动端和小红书精致画风 */
+        #login-modal {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000; /* 确保层级在最上方，高过加载动画 */
+            justify-content: center; 
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .modal-card {
+            background: #ffffff; 
+            width: 88%; 
+            max-width: 380px; 
+            padding: 32px 24px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            text-align: center; 
+            box-sizing: border-box;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-card h3 {
+            margin: 0 0 12px 0; 
+            color: #1a1a1a; 
+            font-size: 22px; 
+            font-weight: 600;
+        }
+        .modal-card p {
+            margin: 0 0 24px 0; 
+            color: #666666; 
+            font-size: 14px; 
+            line-height: 1.6;
+        }
+        .modal-card input {
+            width: 100%; 
+            padding: 14px 16px; 
+            margin-bottom: 20px; 
+            border: 1.5px solid #e5e5e5; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            outline: none; 
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .modal-card input:focus {
+            border-color: #ff2442;
+            box-shadow: 0 0 0 3px rgba(255, 36, 66, 0.1);
+        }
+        .modal-card button {
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, #ff2442, #ff4761); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            box-shadow: 0 8px 16px rgba(255,36,66,0.2); 
+            transition: opacity 0.2s;
+        }
+        .modal-card button:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
-<body class="bg-surface text-on-surface custom-scrollbar text-sm">
-
-    <div id="api-warning-banner" class="hidden bg-error-container text-on-error-container px-4 py-2 text-center text-xs font-semibold border-b border-error/20 flex justify-between items-center z-50 relative">
-        <div class="flex items-center gap-2 mx-auto">
-            <span class="material-symbols-outlined text-sm">warning</span>
-            <span>提示：未检测到模型密钥配置，AI 核心流水线将无法启动。请点击左下角「资产与模型配置」进行绑定。</span>
+<body>
+    <div id="login-modal">
+        <div class="modal-card">
+            <h3><i class="fa-solid fa-wand-magic-sparkles" style="color: #ff2442; margin-right: 6px;"></i>解锁专属 AI</h3>
+            <p>本工具对粉丝免费开放<br>请输入小红书专属暗号解锁使用</p>
+            
+            <input type="text" id="access-code-input" placeholder="请在此处输入暗号...">
+            
+            <button onclick="submitAccessCode()">立即解锁</button>
+            
+            <p style="margin: 20px 0 0 0; color: #999999; font-size: 12px; line-height: 1.6;">
+                还没有暗号？打开小红书关注 <span style="color: #ff2442; font-weight: bold;">[你的小红书昵称]</span><br>
+                私信回复 <span style="background: #fff0f2; color: #ff2442; padding: 2px 6px; border-radius: 4px; font-weight: 500;">暗号</span> 即可免费获取
+            </p>
         </div>
     </div>
 
-    <div class="flex h-screen overflow-hidden bg-surface-container-lowest">
-        
-        <aside class="w-64 bg-surface border-r border-outline-variant flex flex-col shrink-0">
-            <div class="p-6 border-b border-outline-variant flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-on-primary font-bold shadow-lg">AI</div>
-                <div>
-                    <h1 class="font-bold text-on-surface leading-none">InterviewAI</h1>
-                    <span class="text-[11px] text-on-surface-variant font-medium mt-0.5 block">核心全栈调度台</span>
-                </div>
+    <div id="app">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>提示词工具箱</h2>
             </div>
-            
-            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
-                <button data-nav="tracker" onclick="switchTab('tracker')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
-                    <span class="material-symbols-outlined">analytics</span>
-                    <span>投递追踪看板</span>
-                </button>
-                <button data-nav="workspace" onclick="switchTab('workspace')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
-                    <span class="material-symbols-outlined">model_training</span>
-                    <span>核心 AI 工作台</span>
-                </button>
-                <button data-nav="calendar" onclick="switchTab('calendar')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
-                    <span class="material-symbols-outlined">calendar_month</span>
-                    <span>秋招日程总览</span>
-                </button>
-                <button data-nav="debrief" onclick="switchTab('debrief')" class="w-full flex items-center gap-3 px-4 py-3 text-left font-medium rounded-xl transition text-on-surface-variant hover:bg-surface-container">
-                    <span class="material-symbols-outlined">mic</span>
-                    <span>现场录音复盘</span>
-                </button>
-            </nav>
-
-            <div class="p-4 border-t border-outline-variant">
-                <button id="btn-open-settings" onclick="openGlobalSettingsModal()" class="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 bg-surface border border-outline-variant rounded-xl hover:bg-surface-container-high font-semibold text-xs transition cursor-pointer text-on-surface-variant hover:text-primary">
-                    <span class="material-symbols-outlined !text-base">tune</span>
-                    <span>资产与模型配置</span>
-                </button>
-            </div>
-        </aside>
-
-        <main class="flex-1 flex flex-col overflow-hidden bg-surface-container-lowest">
-            
-            <header class="h-16 border-b border-outline-variant bg-surface flex items-center justify-between px-8 shrink-0">
-                <div class="flex items-center gap-2 text-xs font-medium text-on-surface-variant">
-                    <span>控制台</span>
-                    <span class="text-outline">/</span>
-                    <span id="breadcrumb" class="text-primary font-bold uppercase">TRACKER</span>
+            <div class="prompt-list" id="promptList">
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="px-2.5 py-1 bg-surface-container rounded-full text-xs font-medium font-mono text-on-surface-variant">V2.4 Stable</span>
-                </div>
-            </header>
-
-            <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative">
-
-                <section id="content-tracker" class="tab-content space-y-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs">
-                            <div class="flex items-center gap-2 mb-4 text-on-surface">
-                                <span class="material-symbols-outlined text-primary">post_add</span>
-                                <h3 class="text-base font-bold">录入全新投递意向岗位</h3>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">公司名称 *</label><input id="track-company" type="text" placeholder="例如：TikTok Shop" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
-                                <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">目标岗位 *</label><input id="track-role" type="text" placeholder="例如：产品经理 / 策略运营" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
-                                <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">Base 地点</label><input id="track-base" type="text" placeholder="新加坡 / 北京" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
-                                <div>
-                                    <label class="block text-xs font-medium mb-1 text-on-surface-variant">战略优先级</label>
-                                    <select id="track-priority" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary">
-                                        <option value="P0">🔥 P0 (核心死磕目标)</option>
-                                        <option value="P1" selected>⭐ P1 (重点推进主线)</option>
-                                        <option value="P2">☕ P2 (日常储备投递)</option>
-                                    </select>
-                                </div>
-                                <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">薪资/待遇待遇 (月薪或年包)</label><input id="track-salary" type="text" placeholder="例如：SGD 5,000 / Month" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
-                                <div><label class="block text-xs font-medium mb-1 text-on-surface-variant">投递/更新日期</label><input id="track-date" type="date" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
-                                <div class="md:col-span-2"><label class="block text-xs font-medium mb-1 text-on-surface-variant">内推码 / JD 投递链接</label><input id="track-link" type="url" placeholder="https://careers.example.com/job/..." class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary"></div>
-                                <div class="md:col-span-2"><label class="block text-xs font-medium mb-1 text-on-surface-variant">岗位职责具体 JD 文本 (选填，供大模型进行五维对齐分析)</label><textarea id="track-jd" rows="3" placeholder="粘贴官方招聘JD描述..." class="w-full p-2 bg-surface border border-outline rounded-lg text-xs focus:ring-1 focus:ring-primary font-mono"></textarea></div>
-                            </div>
-                            <div class="mt-4 flex justify-end">
-                                <button id="btn-add-track" class="px-5 py-2 bg-primary text-on-primary rounded-xl font-bold text-xs hover:shadow-md transition cursor-pointer flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined !text-sm">add</span>
-                                    <span>压入本地追踪矩阵</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs flex flex-col">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2 text-on-surface">
-                                    <span class="material-symbols-outlined text-amber-500">notifications_active</span>
-                                    <h3 class="text-base font-bold">近期临近大厂日程</h3>
-                                </div>
-                                <button onclick="switchTab('calendar')" class="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5">
-                                    <span>去排期板</span>
-                                    <span class="material-symbols-outlined !text-xs">arrow_forward</span>
-                                </button>
-                            </div>
-                            <div id="upcoming-events-list" class="flex-1 space-y-2 overflow-y-auto max-h-[360px] custom-scrollbar">
-                                </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-surface rounded-2xl border border-outline-variant shadow-xs overflow-hidden">
-                        <div class="p-6 border-b border-outline-variant flex flex-wrap items-center justify-between gap-4 bg-surface-container-low">
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center gap-2 text-on-surface">
-                                    <span class="material-symbols-outlined text-primary">database</span>
-                                    <h3 class="text-base font-bold">全景投递岗位跟踪仓</h3>
-                                </div>
-                                <div id="tracker-stats" class="text-xs text-on-surface-variant font-mono"></div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="relative flex items-center">
-                                    <span class="material-symbols-outlined absolute left-2.5 text-on-surface-variant !text-sm pointer-events-none">search</span>
-                                    <input id="search-track-keyword" type="text" placeholder="快速过滤公司/岗位..." class="pl-8 pr-2.5 py-1.5 border border-outline rounded-lg text-xs w-48 bg-surface">
-                                </div>
-                                <select id="filter-track-status" class="p-1.5 border border-outline rounded-lg text-xs bg-surface">
-                                    <option value="全部" selected>全部状态</option>
-                                    <option value="已投递">已投递</option>
-                                    <option value="笔试中">笔试/测评</option>
-                                    <option value="面试中">面试推进中</option>
-                                    <option value="已拿Offer">斩获Offer</option>
-                                    <option value="流程终止">流程终止</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-surface-container border-b border-outline-variant text-on-surface-variant text-xs font-semibold">
-                                        <th class="p-3 w-28 font-mono">投递日期</th>
-                                        <th class="p-3">公司矩阵</th>
-                                        <th class="p-3">意向岗位目标</th>
-                                        <th class="p-3">工作地点</th>
-                                        <th class="p-3 w-20">优先级</th>
-                                        <th class="p-3">薪资范畴</th>
-                                        <th class="p-3 w-32">当前核心状态</th>
-                                        <th class="p-3 text-center w-48">全栈操控台</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tracker-table-body" class="text-xs divide-y divide-outline-variant">
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="content-workspace" class="tab-content space-y-6 hidden">
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-                        
-                        <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs space-y-4">
-                            <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                                <div class="flex items-center gap-2 text-on-surface">
-                                    <span class="material-symbols-outlined text-primary font-medium">instant_mix</span>
-                                    <h3 class="text-base font-bold">AI 备战引擎调度中心</h3>
-                                </div>
-                                <button onclick="clearActiveSessionResults()" class="text-xs text-error font-medium hover:underline flex items-center gap-0.5">
-                                    <span class="material-symbols-outlined !text-xs">restart_alt</span>
-                                    <span>清空会话</span>
-                                </button>
-                            </div>
-                            <div class="space-y-3">
-                                <div><label class="block text-xs font-medium mb-1">目标公司</label><input id="in-company" type="text" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs"></div>
-                                <div><label class="block text-xs font-medium mb-1">目标岗位</label><input id="in-role" type="text" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs"></div>
-                                <div>
-                                    <label class="block text-xs font-medium mb-1">所属地区目标大盘</label>
-                                    <select id="in-region" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs">
-                                        <option value="Singapore" selected>🇸🇬 Singapore (海淘外企大盘)</option>
-                                        <option value="Mainland China">🇨🇳 中国大陆 (内卷核心大盘)</option>
-                                        <option value="Global-US">🇺🇸 Global-US (北美全球化商业盘)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium mb-1">大模型报告语言偏好</label>
-                                    <select id="in-lang" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs">
-                                        <option value="bilingual" selected>🔤 中英双语混排 (推荐：适合跨国互联网术语)</option>
-                                        <option value="chinese">🇨🇳 纯中文精美输出</option>
-                                    </select>
-                                </div>
-                                <div><label class="block text-xs font-medium mb-1">岗位职责核心 JD 描述对齐</label><textarea id="in-jd" rows="4" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs font-mono" placeholder="粘贴精准JD..."></textarea></div>
-                            </div>
-                            
-                            <div class="border-t border-outline-variant pt-3">
-                                <div class="flex items-center gap-1.5 mb-2 text-primary">
-                                    <span class="material-symbols-outlined !text-base">inventory_2</span>
-                                    <label class="block text-xs font-bold">勾选本次对齐的简历底座资产：</label>
-                                </div>
-                                <div id="resume-selectors" class="space-y-2">
-                                    </div>
-                            </div>
-
-                            <button id="btn-run-pipeline" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold text-xs hover:shadow-lg transition cursor-pointer mt-2 flex items-center justify-center gap-1.5">
-                                <span class="material-symbols-outlined !text-sm">bolt</span>
-                                <span>自动开启五维全套深度备战管道</span>
-                            </button>
-                        </div>
-
-                        <div class="xl:col-span-2 bg-surface rounded-2xl border border-outline-variant shadow-xs overflow-hidden flex flex-col min-h-[580px]">
-                            <div class="bg-surface-container border-b border-outline-variant p-2 flex flex-wrap gap-1">
-                                <button data-tab="match" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-primary text-primary flex items-center gap-1"><span class="material-symbols-outlined !text-sm">center_focus_strong</span>简历对齐矩阵</button>
-                                <button data-tab="business" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">query_stats</span>商业盘与指标拆解</button>
-                                <button data-tab="intro" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">record_voice_over</span>黄金自我介绍</button>
-                                <button data-tab="star" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">auto_stories</span>STAR故事深度挖掘</button>
-                                <button data-tab="qa" class="tab-btn px-4 py-2.5 rounded-lg text-xs font-bold transition border-b-2 border-transparent text-on-surface-variant hover:bg-surface-container-high flex items-center gap-1"><span class="material-symbols-outlined !text-sm">gavel</span>突发压测与反问</button>
-                            </div>
-                            
-                            <div class="flex-1 p-6 bg-surface-container-lowest overflow-y-auto max-h-[560px] custom-scrollbar">
-                                <div id="initial-state" class="text-center py-24 space-y-3">
-                                    <span class="material-symbols-outlined !text-5xl text-outline">rocket_launch</span>
-                                    <p class="text-sm text-on-surface-variant italic">大厂核心对齐管道未运行。请配置好左侧参数，一键启动五维分析流。</p>
-                                </div>
-
-                                <div id="tab-panel-match" class="tab-content-panel space-y-4">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #1 / MATCHING MATRIX</span><button onclick="copyTabContent('tab-panel-match-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
-                                    <article id="tab-panel-match-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
-                                </div>
-                                <div id="tab-panel-business" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #2 / BUSINESS INTEL</span><button onclick="copyTabContent('tab-panel-business-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
-                                    <article id="tab-panel-business-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
-                                </div>
-                                <div id="tab-panel-intro" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #3 / PERFECT ELEVATOR PITCH</span><button onclick="copyTabContent('tab-panel-intro-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
-                                    <article id="tab-panel-intro-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
-                                </div>
-                                <div id="tab-panel-star" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #4 / HARDCORE STAR BEHAVIORAL</span><button onclick="copyTabContent('tab-panel-star-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
-                                    <article id="tab-panel-star-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
-                                </div>
-                                <div id="tab-panel-qa" class="tab-content-panel space-y-4 hidden">
-                                    <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-primary">PIPELINE REPORT #5 / STRESS TEST & REVERSE QA</span><button onclick="copyTabContent('tab-panel-qa-raw')" class="text-xs text-primary border border-primary/20 px-2 py-1 rounded hover:bg-primary/5 flex items-center gap-1"><span class="material-symbols-outlined !text-xs">content_copy</span>复制文本</button></div>
-                                    <article id="tab-panel-qa-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="content-calendar" class="tab-content space-y-6 hidden">
-                    <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs">
-                        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                            <div class="flex items-center gap-4">
-                                <h2 id="cal-month-label" class="text-lg font-bold text-on-surface font-sans">2026 年 -- 月</h2>
-                                <div class="flex items-center border border-outline rounded-lg overflow-hidden bg-surface">
-                                    <button id="btn-cal-prev" class="p-2 hover:bg-surface-container transition flex items-center"><span class="material-symbols-outlined !text-sm">arrow_back_ios</span></button>
-                                    <button id="btn-cal-next" class="p-2 hover:bg-surface-container transition flex items-center"><span class="material-symbols-outlined !text-sm">arrow_forward_ios</span></button>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button id="btn-view-mode-month" class="px-3 py-1.5 rounded-lg text-xs font-medium transition bg-primary text-on-primary">月视图</button>
-                                <button id="btn-view-mode-week" class="px-3 py-1.5 rounded-lg text-xs font-medium transition bg-surface-container-high">周视图指示线</button>
-                                <button onclick="openEventModal(null)" class="px-4 py-1.5 bg-tertiary text-on-tertiary rounded-lg text-xs font-bold hover:shadow-md transition flex items-center gap-1">
-                                    <span class="material-symbols-outlined !text-sm">edit_calendar</span>
-                                    <span>追加独立行程日程</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="cal-month-view" class="space-y-1">
-                            <div class="grid grid-cols-7 gap-1 text-center font-bold text-xs text-on-surface-variant pb-2 border-b border-outline-variant">
-                                <div>周一</div><div>周二</div><div>周三</div><div>周四</div><div>周五</div><div class="text-error/70">周六</div><div class="text-error/70">周日</div>
-                            </div>
-                            <div id="calendar-grid" class="grid grid-cols-7 gap-1 bg-outline-variant/20 rounded-xl overflow-hidden">
-                                </div>
-                        </div>
-
-                        <div id="cal-week-view" class="hidden">
-                            </div>
-                    </div>
-                </section>
-
-                <section id="content-debrief" class="tab-content space-y-6 hidden">
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-                        <div class="bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs space-y-4">
-                            <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                                <div class="flex items-center gap-2 text-on-surface">
-                                    <span class="material-symbols-outlined text-tertiary">clinical_notes</span>
-                                    <h3 class="text-base font-bold">核心终审官复盘面</h3>
-                                </div>
-                                <button onclick="clearDebriefResults()" class="text-xs text-error font-medium hover:underline flex items-center gap-0.5">
-                                    <span class="material-symbols-outlined !text-xs">delete_sweep</span>
-                                    <span>清空复盘</span>
-                                </button>
-                            </div>
-                            <div class="space-y-3">
-                                <div><label class="block text-xs font-medium mb-1">复盘面试公司</label><input id="debrief-company" type="text" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs"></div>
-                                <div><label class="block text-xs font-medium mb-1">复盘面试岗位</label><input id="debrief-role" type="text" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs"></div>
-                                <div><label class="block text-xs font-medium mb-1">岗位硬核核心 JD (供推演核心追问)</label><textarea id="debrief-jd" rows="2" class="w-full p-2 bg-surface border border-outline rounded-lg text-xs font-mono"></textarea></div>
-                                <div>
-                                    <label class="block text-xs font-medium mb-1 text-tertiary font-bold">现场作答原稿 / 语音录音转文字文本：</label>
-                                    <textarea id="debrief-transcript" rows="10" placeholder="请在此粘贴你下考场后自己回忆的回答、或者是直接把现场偷偷录音的飞书妙记/录音转文字全文本丢进来..." class="w-full p-2 bg-surface border border-outline rounded-lg text-xs font-mono text-on-surface focus:ring-1 focus:ring-tertiary"></textarea>
-                                </div>
-                            </div>
-                            <button id="btn-run-debrief" class="w-full py-3 bg-tertiary text-on-tertiary rounded-xl font-bold text-xs hover:shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5">
-                                <span class="material-symbols-outlined !text-sm">psychology</span>
-                                <span>启动 AI 模拟终审官逻辑穿透复盘</span>
-                            </button>
-                        </div>
-
-                        <div class="xl:col-span-2 bg-surface p-6 rounded-2xl border border-outline-variant shadow-xs flex flex-col min-h-[560px]">
-                            <div class="flex justify-between items-center border-b border-outline-variant pb-3 mb-4">
-                                <div class="flex items-center gap-2 text-on-surface">
-                                    <span class="material-symbols-outlined text-tertiary">analytics</span>
-                                    <h3 class="text-base font-bold">AI 核心高管复盘诊断书</h3>
-                                </div>
-                                <span class="text-xs font-mono text-on-surface-variant">REPORT TYPE: AUDIT REPORT</span>
-                            </div>
-                            <div class="flex-1 bg-surface-container-lowest p-4 rounded-xl overflow-y-auto max-h-[500px] custom-scrollbar">
-                                <div id="debrief-initial-state" class="text-center py-28 text-on-surface-variant italic">
-                                    暂无待追溯的现场作答数据。在左侧填入录音初稿后，启动穿透诊断。
-                                </div>
-                                <article id="debrief-report-raw" class="prose prose-sm max-w-none text-on-surface leading-relaxed whitespace-pre-wrap font-sans"></article>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-        </main>
-    </div>
-
-    <div id="event-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-surface w-full max-w-md rounded-2xl border border-outline-variant p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                <div class="flex items-center gap-2 text-on-surface">
-                    <span class="material-symbols-outlined text-primary">calendar_add_on</span>
-                    <h3 class="text-base font-bold">配置具体日程排期事件</h3>
-                </div>
-                <button onclick="closeEventModal()" class="text-on-surface-variant hover:text-on-surface text-lg">✕</button>
-            </div>
-            <form id="event-modal-form" class="space-y-3 text-xs">
-                <input type="hidden" id="event-id">
-                <input type="hidden" id="event-target-app-id">
-                <div><label class="block font-medium mb-1">排期日程标题描述 *</label><input id="event-title" type="text" placeholder="例如：TikTok 一面 (专业技术面)" class="w-full p-2 bg-surface border border-outline rounded-lg" required></div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block font-medium mb-1">确切日期 *</label><input id="event-date" type="date" class="w-full p-2 bg-surface border border-outline rounded-lg" required></div>
-                    <div>
-                        <label class="block font-medium mb-1">事件核心分类</label>
-                        <select id="event-type" class="w-full p-2 bg-surface border border-outline rounded-lg">
-                            <option value="面试">官方核心面试</option>
-                            <option value="笔试">官方线上笔试/测评</option>
-                            <option value="其他">日常备忘备战/反问</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block font-medium mb-1">开始确切时间 (选填)</label><input id="event-starttime" type="time" class="w-full p-2 bg-surface border border-outline rounded-lg"></div>
-                    <div><label class="block font-medium mb-1">预计结束时间 (选填)</label><input id="event-endtime" type="time" class="w-full p-2 bg-surface border border-outline rounded-lg"></div>
-                </div>
-                <div><label class="block font-medium mb-1">面试官提问核心细节备忘 / 接入链接线</label><textarea id="event-notes" rows="3" placeholder="例如：Zoom 链接、面试官可能考核的指标专项..." class="w-full p-2 bg-surface border border-outline rounded-lg font-mono"></textarea></div>
-                <div class="pt-2 flex justify-between gap-2">
-                    <button type="button" id="btn-delete-event" onclick="deleteEventFromModal()" class="px-3 py-2 bg-error-container text-on-error-container rounded-lg font-bold hover:bg-error/20 transition hidden flex items-center gap-1">
-                        <span class="material-symbols-outlined !text-xs">delete</span>
-                        <span>取消日程</span>
-                    </button>
-                    <div class="flex-1 flex justify-end gap-2">
-                        <button type="button" onclick="closeEventModal()" class="px-4 py-2 border border-outline rounded-lg font-medium hover:bg-surface-container">放弃</button>
-                        <button type="submit" class="px-5 py-2 bg-primary text-on-primary rounded-lg font-bold shadow-md hover:shadow-lg transition flex items-center gap-1.5">
-                            <span class="material-symbols-outlined !text-sm">lock</span>
-                            <span>压入日历核心链</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
         </div>
-    </div>
 
-    <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-surface w-full max-w-md rounded-2xl border border-outline-variant p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div class="flex items-center justify-between border-b border-outline-variant pb-2">
-                <div class="flex items-center gap-2 text-on-surface">
-                    <span class="material-symbols-outlined text-primary">encrypted</span>
-                    <h3 class="text-base font-bold">资产与本地大模型密钥端配置</h3>
-                </div>
-                <button onclick="closeGlobalSettingsModal()" class="text-on-surface-variant hover:text-on-surface text-lg">✕</button>
+        <div class="main-content">
+            <div class="top-bar">
+                <button class="toggle-sidebar" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="current-prompt-title" id="currentPromptTitle">请选择一个提示词模板</div>
             </div>
-            <div class="space-y-4 text-xs">
-                <div class="p-3 bg-primary-container/20 border border-primary/20 rounded-xl text-on-primary-container leading-relaxed flex items-start gap-2">
-                    <span class="material-symbols-outlined text-primary !text-base mt-0.5">info</span>
-                    <span><strong>安全持久化说明</strong>：数据完全离线持久化存储于本地浏览器的 <code>localStorage</code> 中，绝不经过任何第三方中转，安全放心。</span>
-                </div>
-                <div><label class="block font-bold mb-1 text-on-surface">大模型 API Key 密钥保护 *</label><input id="settings-apikey" type="password" placeholder="sk-..." class="w-full p-2.5 bg-surface border border-outline rounded-lg font-mono"></div>
-                <div><label class="block font-bold mb-1 text-on-surface">API Base 请求中转基准域名</label><input id="settings-apibase" type="text" placeholder="https://api.deepseek.com/v1" class="w-full p-2.5 bg-surface border border-outline rounded-lg font-mono"></div>
-                <div><label class="block font-bold mb-1 text-on-surface">指定运行的大模型底层系列 ID</label><input id="settings-model" type="text" placeholder="deepseek-chat" class="w-full p-2.5 bg-surface border border-outline rounded-lg font-mono"></div>
-                
-                <div class="border-t border-outline-variant pt-3 space-y-2">
-                    <div class="flex items-center gap-1.5 text-primary">
-                        <span class="material-symbols-outlined !text-base">description</span>
-                        <label class="block font-bold">本地多版本多模态简历资产库微调：</label>
-                    </div>
-                    <div id="resume-bank-settings-container" class="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar">
-                        </div>
-                </div>
 
-                <div class="pt-2 flex justify-end gap-2">
-                    <button onclick="closeGlobalSettingsModal()" class="px-4 py-2 border border-outline rounded-lg font-medium hover:bg-surface-container">关闭</button>
-                    <button id="btn-save-settings" class="px-5 py-2 bg-primary text-on-primary rounded-lg font-bold shadow-md transition flex items-center gap-1.5">
-                        <span class="material-symbols-outlined !text-sm">save</span>
-                        <span>同步保存配置资产</span>
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-message">
+                    <i class="fas fa-robotWelcome"></i>
+                    <h3>欢迎使用 DeepSeek 智能助手</h3>
+                    <p>请在左侧选择一个提示词模板，或者直接在下方输入内容开始对话。</p>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea id="userInput" placeholder="输入消息，Press Enter to send, Shift+Enter for new line..." rows="1"></textarea>
+                    <button class="send-btn" id="sendBtn" title="发送消息">
+                        <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="prompts.js"></script>
+    <script src="app.js"></script>
 
     <script>
-        function switchTab(tabId) {
-            console.log(`[全局调度] 正在强行切向功能视图模块: ${tabId}`);
+        // 页面刚加载时，检查本地是否存有暗号，没有就展现弹窗
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedCode = localStorage.getItem('access_code');
+            const modal = document.getElementById('login-modal');
+            if (!savedCode && modal) {
+                modal.style.display = 'flex';
+            }
+        });
 
-            // 1. 隐藏所有内容主视图
-            document.querySelectorAll('.tab-content').forEach(section => {
-                section.classList.add('hidden');
-            });
+        // 点击“立即解锁”时的行为
+        function submitAccessCode() {
+            const codeInput = document.getElementById('access-code-input');
+            const inputCode = codeInput ? codeInput.value.trim() : '';
             
-            // 2. 强行激活目标视图
-            const targetSection = document.getElementById(`content-${tabId}`);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-            } else {
-                console.error(`[视图错误] 未能在 HTML 中寻寻找目标功能模块 ID: content-${tabId}`);
+            if (!inputCode) {
+                alert('请输入有效暗号哦！');
+                return;
             }
             
-            // 3. 更新侧边栏导航高亮视觉
-            document.querySelectorAll('[data-nav]').forEach(btn => {
-                const isMatch = btn.getAttribute('data-nav') === tabId;
-                const icon = btn.querySelector('.material-symbols-outlined');
-                
-                if (isMatch) {
-                    btn.classList.remove('text-on-surface-variant', 'hover:bg-surface-container');
-                    btn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'rounded-xl');
-                    if(icon) icon.style.fontVariationSettings = "'FILL' 1";
-                } else {
-                    btn.classList.add('text-on-surface-variant', 'hover:bg-surface-container');
-                    btn.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'rounded-xl');
-                    if(icon) icon.style.fontVariationSettings = "'FILL' 0";
-                }
-            });
-
-            // 4. 同步更新面包屑标题
-            const breadcrumb = document.getElementById('breadcrumb');
-            if (breadcrumb) {
-                breadcrumb.textContent = tabId.toUpperCase();
-            }
+            // 存入浏览器本地缓存
+            localStorage.setItem('access_code', inputCode);
+            
+            // 关闭隐藏弹窗
+            document.getElementById('login-modal').style.display = 'none';
+            
+            // 顺畅过渡提示
+            alert('暗号已成功录入！快去发送消息测试吧 ✨');
         }
-
-        // 统一模态框弹窗开关桥梁
-        function openGlobalSettingsModal() {
-            const modal = document.getElementById('settings-modal');
-            if (modal) modal.classList.remove('hidden');
-        }
-        function closeGlobalSettingsModal() {
-            const modal = document.getElementById('settings-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        // 将本页面的切换函数彻底挂载到全局 window 对象上，确保外置 app.js 能完美跨作用域调用它
-        window.switchTab = switchTab;
     </script>
-    
-    <script src="app.js"></script>
 </body>
 </html>
